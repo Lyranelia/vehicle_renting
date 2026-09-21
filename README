@@ -44,3 +44,13 @@ while (isTypeNull) {
 }
 ```
 - Nutze stattdessen readline-sync
+
+# Fehler:
+- fixed // logReturnType() loggt auch bei Canceln der Suche, dass soundso viel Geld vom Account gechargt wird
+
+
+# To-Do:
+- Interfaces angucken, implementieren
+- getter und setter Methoden angucken
+- done // addVehicle() implementieren
+- done // bei addVehicle auch das neue Fahrzeug ins Array

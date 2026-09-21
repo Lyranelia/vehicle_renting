@@ -72,11 +72,6 @@ let vehicles = [
     new Bike("Fahrrad Marke 4"),
     new Bike("Fahrrad Marke 4 Lite")
 ];
-let eVehicles = [];
-// Hervorragend, das funktioniert schonmal
-// dann jetzt Methoden, wa
-// und ne Dublettenprüfung für die IDs wär auch ganz sinnvoll
-// console.log(vehicles)
 function logo() {
     console.log("\n  +++++++++++++++++++++++++++++");
     console.log("  +     SCOOTERS; EBIKES      +");
@@ -91,7 +86,7 @@ function adminScreen(name) {
         let adminQuestion = readlineSync.question("[1] show all vehicles\n[2] show all vehicles, detailed\n[3] show all rentable vehicles\n[4] charge all to 100 %\n[5] add new vehicle\n\nchoice: ");
         const adminNum = parseInt(adminQuestion);
         if (adminQuestion === null || isNaN(adminNum) || adminNum < 1 || adminNum > 5) {
-            console.log("Please enter 1, 2, 3, 4 or 5.");
+            console.log("Please enter a number between 1 and 5.");
             continue;
         }
         isTypeNull = false;
@@ -133,11 +128,49 @@ function adminScreen(name) {
                 }
                 break;
             case 5:
+                addVehicle();
                 break;
         }
     }
 }
+function addName(type) {
+    let isTypeNullA = true;
+    const vehicleName = readlineSync.question(`Please enter the name of the ${type}.\nname: `);
+    while (isTypeNullA) {
+        if (!vehicleName) {
+            console.log("Cannot have empty name. Try again.");
+            continue;
+        }
+        isTypeNullA = false;
+    }
+    console.log(`\nYou successfully added a new ${type} named "${vehicleName}"!\n`);
+    return vehicleName;
+}
 function addVehicle() {
+    let isTypeNull = true;
+    while (isTypeNull) {
+        const whatVehicle = readlineSync.question("What kind of vehicle do you want to add?\n[1] e-scooter\n[2] e-bike\n[3] bike\nchoice: ");
+        const num = parseInt(whatVehicle);
+        if (whatVehicle === null || isNaN(num) || num < 1 || num > 3) {
+            console.log("Please enter 1, 2, or 3.");
+            continue;
+        }
+        isTypeNull = false;
+        switch (num) {
+            case 1:
+                vehicles.push(new EScooter(addName("E-Scooter")));
+                startScreen(customer);
+                break;
+            case 2:
+                vehicles.push(new EBike(addName("E-Bike")));
+                startScreen(customer);
+                break;
+            case 3:
+                vehicles.push(new Bike(addName("Bike")));
+                startScreen(customer);
+                break;
+        }
+    }
 }
 function logRentType(type, price) {
     let isTypeNull = true;
@@ -211,58 +244,10 @@ function searchForVehicle() {
         }
     }
 }
-function rentVehicle(customer) {
-    let isTypeNullB = true;
-    while (isTypeNullB) {
-        let typeOfVehicle = readlineSync.question(`\nHi, ${customer}!\nWhat kind of vehicle do you want to rent today?\n[1] e-scooter\n[2] e-bike\n[3] bike\n`);
-        // Antwort parsen und auswerten
-        const num = parseInt(typeOfVehicle);
-        if (typeOfVehicle === null || isNaN(num) || num < 1 || num > 3) {
-            console.log("Please enter 1, 2, or 3.");
-            continue;
-        }
-        isTypeNullB = false;
-        switch (num) {
-            case 1:
-                logRentType("e-scooter", EScooter.pricePerMinute);
-                break;
-            case 2:
-                logRentType("e-bike", EBike.pricePerMinute);
-                break;
-            case 3:
-                logRentType("bike", Bike.pricePerMinute);
-                break;
-        }
-    }
-}
-function returnVehicle(customer) {
-    let isTypeNullC = true;
-    while (isTypeNullC) {
-        let typeOfVehicle = readlineSync.question(`\nHi, ${customer}!\nWhat kind of vehicle do you want to return today?\n[1] e-scooter\n[2] e-bike\n[3] bike\n`);
-        // Antwort parsen und auswerten
-        const num = parseInt(typeOfVehicle);
-        if (typeOfVehicle === null || isNaN(num) || num < 1 || num > 3) {
-            console.log("Please enter 1, 2, or 3.");
-            continue;
-        }
-        isTypeNullC = false;
-        switch (num) {
-            case 1:
-                logReturnType("e-scooter", EScooter.pricePerMinute);
-                break;
-            case 2:
-                logReturnType("e-bike", EBike.pricePerMinute);
-                break;
-            case 3:
-                logReturnType("bike", Bike.pricePerMinute);
-                break;
-        }
-    }
-}
 function startScreen(customer) {
     let isTypeNullA = true;
     while (isTypeNullA) {
-        let whatToDo = readlineSync.question(`Welcome, ${customer}!\nWhat do you want to do?\n[1] rent a vehicle\n[2] return a vehicle\n[3]go to admin page\n`);
+        let whatToDo = readlineSync.question(`Welcome, ${customer}!\nWhat do you want to do?\n[1] rent a vehicle\n[2] return a vehicle\n[3] go to admin page\n`);
         const num = parseInt(whatToDo);
         if (whatToDo === null || isNaN(num) || num < 1 || num > 3) {
             console.log("Please enter 1, 2, or 3.");
@@ -271,10 +256,54 @@ function startScreen(customer) {
         isTypeNullA = false;
         switch (num) {
             case 1:
-                rentVehicle(customer);
+                // +++ rent a vehicle +++
+                let isTypeNullB = true;
+                while (isTypeNullB) {
+                    let typeOfVehicle = readlineSync.question(`\nHi, ${customer}!\nWhat kind of vehicle do you want to rent today?\n[1] e-scooter\n[2] e-bike\n[3] bike\n`);
+                    // Antwort parsen und auswerten
+                    const num = parseInt(typeOfVehicle);
+                    if (typeOfVehicle === null || isNaN(num) || num < 1 || num > 3) {
+                        console.log("Please enter 1, 2, or 3.");
+                        continue;
+                    }
+                    isTypeNullB = false;
+                    switch (num) {
+                        case 1:
+                            logRentType("e-scooter", EScooter.pricePerMinute);
+                            break;
+                        case 2:
+                            logRentType("e-bike", EBike.pricePerMinute);
+                            break;
+                        case 3:
+                            logRentType("bike", Bike.pricePerMinute);
+                            break;
+                    }
+                }
                 break;
             case 2:
-                returnVehicle(customer);
+                // +++ return a vehicle +++
+                let isTypeNullC = true;
+                while (isTypeNullC) {
+                    let typeOfVehicle = readlineSync.question(`\nHi, ${customer}!\nWhat kind of vehicle do you want to return today?\n[1] e-scooter\n[2] e-bike\n[3] bike\n`);
+                    // Antwort parsen und auswerten
+                    const num = parseInt(typeOfVehicle);
+                    if (typeOfVehicle === null || isNaN(num) || num < 1 || num > 3) {
+                        console.log("Please enter 1, 2, or 3.");
+                        continue;
+                    }
+                    isTypeNullC = false;
+                    switch (num) {
+                        case 1:
+                            logReturnType("e-scooter", EScooter.pricePerMinute);
+                            break;
+                        case 2:
+                            logReturnType("e-bike", EBike.pricePerMinute);
+                            break;
+                        case 3:
+                            logReturnType("bike", Bike.pricePerMinute);
+                            break;
+                    }
+                }
                 break;
             case 3:
                 adminScreen(customer);
