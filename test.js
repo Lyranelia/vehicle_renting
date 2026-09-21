@@ -176,27 +176,24 @@ function logReturnType(name, price) {
         const durationNum = parseInt(duration);
         const vehicle = searchForVehicle();
         if (vehicle == undefined || vehicle == null) {
+            console.log("\nYou canceled the return.");
             return undefined;
         }
         vehicle.isRented = false;
-        if (vehicle instanceof ElectricVehicle) { // nur E-Fahrzeuge haben battery
+        if (vehicle instanceof ElectricVehicle) {
             vehicle.battery = Math.max(0, vehicle.battery - durationNum * 0.5);
         }
         console.log(`\nYou have successfully returned your ${name} and will be charged ${durationNum * price} from your account.\nThank you for being with us!`);
         // das auch vorher mit einer [y]/[n] question, ob das so gewollt ist, vielleicht ist ja die Zahl verkehrt
         isTypeNullD = false;
-        // hier vehikel.isRented = false; setzen, aber dazu muss auch ein einzelnes vehikel angesprochen/gesetzt werden
-        // also noch eine Suche einbauen, na cool
-        // und vehikel.battery -= (duration * 0.5) oder so
     }
 }
 function searchForVehicle() {
     let isTypeNull = true;
     while (isTypeNull) {
-        let search = readlineSync.question("Which vehicle?\nPlease enter the exact name (or c to go back): ");
-        if (search.toLowerCase == "c") {
-            let vehicle = undefined;
-            return vehicle;
+        const search = readlineSync.question("Which vehicle?\nPlease enter the exact name (or c to go back): ");
+        if (search.toLowerCase() == "c") {
+            return undefined;
         }
         if (!search) {
             console.log("\nNothing entered. Please try again.\n");
@@ -207,7 +204,7 @@ function searchForVehicle() {
             if (vehicle == undefined) {
                 continue;
             }
-            if (vehicle.name.toLowerCase == search.toLowerCase) {
+            if (vehicle.name.toLowerCase() == search.toLowerCase()) {
                 return vehicle;
             }
             console.log(`\nNo vehicle found with the name "${search}". Please try again.\n`);
