@@ -62,14 +62,14 @@ let vehicles = [
     new EScooter("Xiaomi 1 Pro"),
     new EScooter("Xiaomi 2 Pro"),
     new EScooter("Xiaomi 5 Pro"),
-    new EScooter("Xiaomi 1 "),
+    new EScooter("Xiaomi 1"),
     new EBike("Decathlon Rockrider"),
     new EBike("Decathlon 2"),
     new EBike("Decathlon 3"),
     new EBike("Xiaomi 4"),
     new Bike("Fahrrad Marke 4 Pro"),
     new Bike("Fahrrad Marke 3 Pro"),
-    new Bike("Fahrrad Marke 4 "),
+    new Bike("Fahrrad Marke 4"),
     new Bike("Fahrrad Marke 4 Lite")
 ];
 let eVehicles = [];
@@ -114,8 +114,8 @@ function adminScreen(name) {
                 break;
             case 3:
                 for (let i = 0; i < vehicles.length; i++) {
-                    let vehicle = eVehicles[i];
-                    if (vehicle) {
+                    let vehicle = vehicles[i];
+                    if (vehicle instanceof ElectricVehicle) {
                         if (vehicle.battery >= 20 && vehicle.isRented === false) {
                             console.log(`${vehicle.type} - ${vehicle.name} - ${vehicle.battery}`);
                         }
@@ -124,8 +124,8 @@ function adminScreen(name) {
                 break;
             case 4:
                 for (let i = 0; i < vehicles.length; i++) {
-                    let vehicle = eVehicles[i];
-                    if (vehicle) {
+                    let vehicle = vehicles[i];
+                    if (vehicle instanceof ElectricVehicle) {
                         if (vehicle.battery != 100 && vehicle.isRented === false) {
                             console.log(`charged for ${100 - vehicle.battery} to 100 %:\n ${vehicle.type} - ${vehicle.name} - ${vehicle.battery}`);
                         }
@@ -137,10 +137,12 @@ function adminScreen(name) {
         }
     }
 }
+function addVehicle() {
+}
 function logRentType(type, price) {
     let isTypeNull = true;
     // gucken, ob "a" oder "an" benutzt werden muss
-    if (type === "e-scooter" || "e-bike") {
+    if (type === "e-scooter" || type === "e-bike") {
         console.log(`You want to rent an ${type}, is that right? That would be ${price} € per minute.`);
     }
     if (type === "bike") {
@@ -171,9 +173,45 @@ function logReturnType(name, price) {
             console.log("Please enter a whole number.");
             continue;
         }
-        const num = parseInt(duration);
-        console.log(`\nYou have successfully returned your ${name} and will be charged ${num * price} from your account.\nThank you for being with us!`);
+        const durationNum = parseInt(duration);
+        const vehicle = searchForVehicle();
+        if (vehicle == undefined || vehicle == null) {
+            return undefined;
+        }
+        vehicle.isRented = false;
+        if (vehicle instanceof ElectricVehicle) { // nur E-Fahrzeuge haben battery
+            vehicle.battery = Math.max(0, vehicle.battery - durationNum * 0.5);
+        }
+        console.log(`\nYou have successfully returned your ${name} and will be charged ${durationNum * price} from your account.\nThank you for being with us!`);
+        // das auch vorher mit einer [y]/[n] question, ob das so gewollt ist, vielleicht ist ja die Zahl verkehrt
         isTypeNullD = false;
+        // hier vehikel.isRented = false; setzen, aber dazu muss auch ein einzelnes vehikel angesprochen/gesetzt werden
+        // also noch eine Suche einbauen, na cool
+        // und vehikel.battery -= (duration * 0.5) oder so
+    }
+}
+function searchForVehicle() {
+    let isTypeNull = true;
+    while (isTypeNull) {
+        let search = readlineSync.question("Which vehicle?\nPlease enter the exact name (or c to go back): ");
+        if (search.toLowerCase == "c") {
+            let vehicle = undefined;
+            return vehicle;
+        }
+        if (!search) {
+            console.log("\nNothing entered. Please try again.\n");
+            continue;
+        }
+        for (let i = 0; i < vehicles.length; i++) {
+            let vehicle = vehicles[i];
+            if (vehicle == undefined) {
+                continue;
+            }
+            if (vehicle.name.toLowerCase == search.toLowerCase) {
+                return vehicle;
+            }
+            console.log(`\nNo vehicle found with the name "${search}". Please try again.\n`);
+        }
     }
 }
 function rentVehicle(customer) {
