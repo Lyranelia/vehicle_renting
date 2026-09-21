@@ -1,2 +1,46 @@
 # Recherche und Konzept
  
+1. Konzept zusammensuchen:
+- Klassen bauen recherchieren
+- Klassen bauen mit Feldern (Elternklasse für Fahrzeuge, Kindklassen normales Fahrrad und E-Fahrzeuge, Kindklassen davon E-Scooter u. E-Bike)
+- Methoden in Klassen einfügen
+- Konsolenstartbildschirm basteln
+- Feststellung: prompt macht komische Sachen, muss nach längerer Recherche nun doch readline für user input in der Konsole verwenden
+- konkret:
+```
+const customer = prompty("Hi! What should I call you?\nname: ");
+console.log(`Okay, thank you, ${customer}!`);
+```
+Der String in prompty() wird dreimal geloggt. Danach wird mit der gleichen Funktion gefragt, welches Gerät man mieten möchte. Bei jedem Zeichen, das daraufhin eingegeben wird, wird die Frage nochmal geloggt.
+```
+while (isTypeNull) {
+    typeOfVehicle = prompty("\nWhat kind of vehicle do you want to rent today?\n[1] e-scooter\n[2] e-bike\n[3] bike\n")
+    // Antwort parsen und auswerten
+    if (typeOfVehicle === null || isNaN(parseInt(typeOfVehicle))){
+        continue;
+    }
+    isTypeNull = false;
+    const num = parseInt(typeOfVehicle);
+
+    try{
+
+        switch (num) {
+            case 1:
+                logType("e-scooter");
+                break;
+            case 2:
+                logType("e-bike");
+                break;
+            case 3:
+                logType("bike");
+                break;
+            default:
+                console.log("Please enter 1, 2, or 3");
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+```
+- Nutze stattdessen readline-sync
