@@ -1,8 +1,6 @@
 // This is gonna be a test file for TypeScript 
 // prompt am Arsch, muss zu readline wechseln
 
-import nodeFs = require("node:fs"); // hä wo kommt'n das her?
-
 const readlineSync = require("readline-sync");
 
 
@@ -13,7 +11,7 @@ class TwoWheelVehicle {
     id: number;
     isRented: boolean;
     pricePerMinute: number;
-    static nextId: number = 1;
+    static nextId: number = 1;      // Instanz der Klasse, nicht eines Objektes
 
     constructor(type: string, name: string, pricePerMinute: number){
 
@@ -97,6 +95,24 @@ let vehicles: TwoWheelVehicle[] = [
     new Bike("Fahrrad Marke 4 Lite")
 ];
 
+function yesOrNo() {
+    let isTypeNull = true;
+    while (isTypeNull) {
+        let yesOrNo = readlineSync.question("[y]/[n]\nchoice: ");
+        if (yesOrNo === null) {
+            console.log("Please type 'y' for yes or 'n' for no")
+            continue
+        }
+        if (yesOrNo.toLowerCase() === "y") {
+            isTypeNull = false;
+            return true;
+        }
+        else if (yesOrNo.toLowerCase() === "n") {
+            isTypeNull = false;
+            return false;
+        }
+    }
+}
 
 function logo() {
     console.log("\n  +++++++++++++++++++++++++++++");
@@ -170,16 +186,17 @@ function adminScreen(name: string | null) {
 
 function addName(type: string) {
     let isTypeNullA = true;
-    const vehicleName = readlineSync.question(`Please enter the name of the ${type}.\nname: `)
+    
     while (isTypeNullA) {
+        const vehicleName = readlineSync.question(`Please enter the name of the ${type}.\nname: `)
         if (!vehicleName) {
             console.log("Cannot have empty name. Try again.");
             continue;
         }
         isTypeNullA = false;
+        console.log(`\nYou successfully added a new ${type} named "${vehicleName}"!\n`)
+        return vehicleName;
     }
-    console.log(`\nYou successfully added a new ${type} named "${vehicleName}"!\n`)
-    return vehicleName;
 }
 
 function addVehicle() {
@@ -224,21 +241,8 @@ function logRentType(type: string, price: number) {
         console.log(`You want to rent a ${type}, is that right? That would be ${price} € per minute.`)
     }
 
-    while (isTypeNull) {
-        let yesOrNo = readlineSync.question("[y]/[n]\nchoice: ");
-        if (yesOrNo === null) {
-            console.log("Please type 'y' for yes or 'n' for no")
-            continue
-        }
-        if (yesOrNo.toLowerCase() === "y") {
-            console.log("You voted yes!")
-            isTypeNull = false;
-        }
-        else if (yesOrNo.toLowerCase() === "n") {
-            console.log("You voted no!")
-            isTypeNull = false;
-        }
-    }
+    const confirm = yesOrNo();
+    return confirm;
 }
 
 function logReturnType(name: string | null, price: number) {
@@ -295,10 +299,15 @@ function searchForVehicle() {
                 continue;
             }
             if (vehicle.name.toLowerCase() == search.toLowerCase()) {
+                console.log(`Do you mean this one: "${vehicle.name}"?`);
+                const choice = yesOrNo();
+                if (!choice) {
+                    continue;
+                }
                 return vehicle;
             }
-            console.log(`\nNo vehicle found with the name "${search}". Please try again.\n`);
         }
+        console.log(`\nNo vehicle found with the name "${search}". Please try again.\n`);
     }
 }
 
@@ -334,10 +343,10 @@ function startScreen(customer: string | null) {
                         
                         switch (num) {
                             case 1:
-                                logRentType("e-scooter", EScooter.pricePerMinute);
+                                logRentType("E-Scooter", EScooter.pricePerMinute);
                                 break;
                             case 2:
-                                logRentType("e-bike", EBike.pricePerMinute);
+                                logRentType("E-Bike", EBike.pricePerMinute);
                                 break;
                             case 3:
                                 logRentType("bike", Bike.pricePerMinute);
